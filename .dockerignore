@@ -1,0 +1,13 @@
+node_modules/
+
+.env
+.prod.env
+.tmp
+
+.idea
+Makefile
+docker-compose.yml
+.gitignore
+Dockerfile
+node.Dockerfile
+README.md

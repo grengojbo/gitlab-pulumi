@@ -1,0 +1,11 @@
+{
+    "name": "iwis-base",
+    "devDependencies": {
+        "@types/node": "^14.0.0"
+    },
+    "dependencies": {
+        "@pulumi/aws": "^5.2.0",
+        "@pulumi/awsx": "^0.40.0",
+        "@pulumi/pulumi": "^3.30.0"
+    }
+}
