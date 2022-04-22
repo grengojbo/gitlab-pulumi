@@ -200,14 +200,16 @@ patch:  ##  Set patch version
 
 
 build:  ## Local Build сборка проекта
-	@.stack/build.sh
+	docker build -t ${PULUMI_IMG}:${PULUMI_TAG} -f node.Dockerfile .
 
-release:  ## Build and publish Release
+release: build ## Build and publish Release
 	@#echo "Start Build and publish Release ${WERF_IMAGES_REPO}:${TAG}"
 	@#werf build-and-publish --stages-storage :local --images-repo=${WERF_IMAGES_REPO} --tag-custom=${TAG}
 	@#$(RUN_COMMAND) build-and-publish --stages-storage :local --images-repo=${WERF_IMAGES_REPO} --tag-custom=${TAG}
-	@docker run -it --rm -e PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} -e PULUMI_STACK_SELECT=${PULUMI_STACK_SELECT} -v $(shell pwd):/app ${PULUMI_IMG} run-pulumi.sh
+	@#docker run -it --rm -e PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} -e PULUMI_STACK_SELECT=${PULUMI_STACK_SELECT} -v $(shell pwd):/app ${PULUMI_IMG} run-pulumi.sh
+	@echo "Start Build and publish Release ${PULUMI_IMG}:${PULUMI_TAG}"
+	@docker push ${PULUMI_IMG}:${PULUMI_TAG}
 
 shell-pulumi: ## позключаемся к контейнеру с установленым Pulumi
 	@#echo "set export PULUMI_ACCESS_TOKEN=***"
-	@docker run -it --rm -v ${PWD}:/app -e PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} -e PULUMI_STACK_SELECT=${PULUMI_STACK_SELECT} ${PULUMI_IMG} bash
+	@docker run -it --rm -v ${PWD}:/app -e PULUMI_ACCESS_TOKEN=${PULUMI_ACCESS_TOKEN} -e PULUMI_STACK_SELECT=${PULUMI_STACK_SELECT} ${PULUMI_IMG}:${PULUMI_TAG} bash

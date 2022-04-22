@@ -1,0 +1,58 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - 'main'
+  # schedule:
+  #   - cron: '0 10 * * *'
+  # push:
+  #   branches:
+  #     - '**'
+  #   tags:
+  #     - 'v*.*.*'
+  # pull_request:
+  #   branches:
+  #     - 'main'
+
+jobs:
+  pulumi:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+        id: builder1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Login to GitHub Container Registry
+        uses: docker/login-action@v1 
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.builder1.outputs.name }}
+          context: .
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=registry,ref=grengojbo/gitlab-pulumi-node:aws-v3.30.0
+          cache-to: type=inline
+          push: true
+          file: node.Dockerfile
+          tags: |
+            grengojbo/gitlab-pulumi-node:aws-v3.30.0
+            ghcr.io/grengojbo/gitlab-pulumi-node:aws-v3.30.0
