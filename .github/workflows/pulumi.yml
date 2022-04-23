@@ -48,7 +48,7 @@ jobs:
         with:
           builder: ${{ steps.builder1.outputs.name }}
           context: .
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/amd64
           cache-from: type=registry,ref=grengojbo/gitlab-pulumi-node:aws-v3.30.0
           cache-to: type=inline
           push: true
